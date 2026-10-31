@@ -1,1 +1,1181 @@
+<title>UPM — Smarter PC. Better Life.</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="UPM(Universal PC Manager) — PC 성능을 한눈에 확인하고 더 쾌적하게 관리하세요.">
+<meta name="theme-color" content="#04091e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap">
 
+<style>
+/* ─── TOKENS ─────────────────────────── */
+:root{
+  --bg:#04091e;
+  --bg2:#050d24;
+  --panel:rgba(255,255,255,.04);
+  --panel2:rgba(255,255,255,.06);
+  --border:rgba(100,180,255,.15);
+  --border2:rgba(100,180,255,.25);
+  --fg:#f0f6ff;
+  --fg2:#a8c0e0;
+  --fg3:#5a7aaa;
+  --blue:#16c7ff;
+  --blue2:#267dff;
+  --purple:#9b5cff;
+  --cyan:#38eaff;
+  --green:#22e8a0;
+  --amber:#ffb840;
+  --red:#ff5560;
+  --max:1300px;
+  --mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:90px;color-scheme:dark}
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:'Noto Sans KR','Inter',system-ui,sans-serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+.container{width:min(var(--max),calc(100% - 64px));margin:auto}
+
+/* ─── WORLD BG ─── */
+.world-bg{
+  position:fixed;inset:0;
+  z-index:0;
+  pointer-events:none;
+  background: url('bg.png') center/cover no-repeat;
+}
+.world-svg{
+  display:none;
+}
+
+/* ─── NAV ─────────────────────────────── */
+.site-header{
+  position:sticky;
+  top:env(safe-area-inset-top,0px);
+  left:0;right:0;
+  z-index:100;
+  background:rgba(4,9,30,.82);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(100,180,255,.12);
+}
+.site-header::before{
+  content:"";
+  position:fixed;inset:0 0 auto;
+  height:env(safe-area-inset-top,0px);
+  background:rgba(4,9,30,.92);
+  z-index:101;
+}
+.nav{
+  height:80px;
+  display:flex;align-items:center;justify-content:space-between;gap:28px;
+  position:relative;z-index:1;
+}
+
+/* Brand */
+.brand{display:flex;align-items:center;gap:12px;min-width:200px}
+.brand-logo{display:flex;align-items:center;gap:10px}
+.brand-upm{
+  font-size:32px;font-weight:900;letter-spacing:-2px;line-height:1;
+  background:linear-gradient(105deg,#24e1ff 0%,#3a8cff 45%,#ad63ff 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 16px rgba(24,140,255,.45));
+}
+.brand-sub{
+  font-size:10px;color:#7a9ac8;letter-spacing:.01em;
+  display:flex;flex-direction:column;gap:1px;
+}
+.brand-sub-name{font-size:11px;color:#8fb8e0;font-weight:500}
+
+/* Nav links */
+.nav-links{
+  display:flex;align-items:center;gap:36px;
+  font-size:14px;color:#c5d8f5;
+}
+.nav-links a{transition:color .18s;position:relative;padding-bottom:3px}
+.nav-links a:hover{color:#fff}
+.nav-links a.active::after{
+  content:"";position:absolute;bottom:-28px;left:0;right:0;
+  height:2px;background:linear-gradient(90deg,var(--blue),var(--purple));
+  border-radius:1px;
+}
+
+/* CTA */
+.nav-cta{
+  display:inline-flex;align-items:center;gap:9px;
+  background:linear-gradient(105deg,#14b8f0 0%,#3a7cff 55%,#9a4bff 100%);
+  color:#fff;font-size:13px;font-weight:700;
+  border-radius:12px;padding:11px 20px;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 0 28px rgba(30,120,255,.4),0 4px 16px rgba(0,0,0,.4);
+  transition:all .22s;
+}
+.nav-cta:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 0 42px rgba(30,120,255,.6),0 6px 22px rgba(0,0,0,.4)}
+.nav-cta .win-ico{font-size:16px}
+
+.menu-toggle{
+  display:none;
+  background:transparent;color:white;
+  border:1px solid rgba(100,180,255,.25);
+  border-radius:10px;padding:9px 12px;font-size:16px;
+}
+
+/* ─── HERO ────────────────────────────── */
+.hero{
+  position:relative;isolation:isolate;
+  min-height:calc(100vh - 80px);
+  display:grid;
+  grid-template-columns:.95fr 1.05fr;
+  align-items:center;
+  gap:0;
+  overflow:hidden;
+  padding:80px 0;
+  border-bottom:1px solid rgba(60,140,255,.2);
+  z-index:1;
+}
+.hero .container{
+  display:contents;
+}
+
+/* Hero copy side */
+.hero-l{
+  position:relative;z-index:2;
+  padding:0 40px 0 max(60px,env(safe-area-inset-left,0px));
+  max-width:680px;
+}
+.eyebrow{
+  font-size:13px;letter-spacing:.07em;
+  color:var(--cyan);font-weight:700;
+  margin-bottom:22px;
+  display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:20px;height:1.5px;background:currentColor;opacity:.6;border-radius:1px}
+
+.hero h1{
+  font-size:clamp(40px,5vw,68px);
+  letter-spacing:-.05em;line-height:1.1;
+  margin-bottom:20px;
+  font-weight:900;
+}
+.hero h1 .gw{
+  background:linear-gradient(100deg,#25ddff,#3789ff 50%,#ad62ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 18px rgba(30,120,255,.4));
+}
+
+.hero-copy{
+  font-size:15px;line-height:1.9;
+  color:var(--fg2);margin-bottom:32px;max-width:480px;
+}
+
+.hero-actions{
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  margin-bottom:28px;
+}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  border-radius:999px;padding:16px 26px;
+  font-size:14px;font-weight:700;
+  border:1px solid transparent;transition:all .22s;cursor:pointer;
+  white-space:nowrap;
+}
+.btn-primary{
+  background:linear-gradient(105deg,#10c0f0 0%,#3878ff 55%,#a040ff 100%);
+  box-shadow:0 8px 32px rgba(40,120,255,.45),0 0 0 1px rgba(255,255,255,.08);
+  color:white;
+}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 12px 42px rgba(40,120,255,.6)}
+.btn-secondary{
+  border-color:rgba(100,160,240,.35);
+  color:#d0e4ff;background:rgba(10,25,55,.6);
+}
+.btn-secondary:hover{border-color:var(--blue);background:rgba(15,35,80,.7)}
+.win-ico{font-size:18px;line-height:1}
+
+.trust-row{
+  display:flex;gap:20px;flex-wrap:wrap;
+  color:var(--fg2);font-size:12px;
+}
+.trust-row span{display:flex;align-items:center;gap:7px}
+.ck{color:var(--cyan);font-size:14px;line-height:1}
+
+/* Hero visual side */
+.hero-r{
+  position:relative;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 max(60px,env(safe-area-inset-right,0px)) 0 20px;
+  min-height:500px;
+}
+
+/* 3D glow platform */
+.scene{
+  position:relative;
+  width:100%;max-width:580px;
+}
+.scene::after{
+  content:"";
+  position:absolute;
+  bottom:-40px;left:50%;transform:translateX(-50%);
+  width:70%;height:60px;
+  background:radial-gradient(ellipse,rgba(30,100,255,.55) 0%,transparent 70%);
+  filter:blur(20px);
+  border-radius:50%;
+  pointer-events:none;
+}
+
+/* 3D floating orb glow behind screen */
+.orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(0px);
+  pointer-events:none;
+}
+.orb-1{
+  width:280px;height:280px;
+  right:-40px;top:-60px;
+  background:radial-gradient(circle at 40% 40%,rgba(80,140,255,.3) 0%,rgba(100,60,255,.15) 50%,transparent 70%);
+  filter:blur(30px);
+}
+.orb-2{
+  width:180px;height:180px;
+  left:-30px;bottom:20px;
+  background:radial-gradient(circle,rgba(20,180,255,.2) 0%,transparent 70%);
+  filter:blur(22px);
+}
+
+/* desktop window */
+.dwin{
+  position:relative;z-index:2;
+  background:rgba(6,16,42,.92);
+  border:1px solid rgba(80,150,255,.3);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.04),
+    0 30px 80px rgba(0,0,0,.8),
+    0 0 60px rgba(30,100,255,.25),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter:blur(4px);
+}
+
+/* glass tint top edge */
+.dwin::before{
+  content:"";
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(100,200,255,.4),rgba(180,120,255,.3),transparent);
+}
+
+.titlebar{
+  display:flex;align-items:center;gap:6px;
+  padding:10px 14px;
+  background:rgba(0,0,0,.45);
+  border-bottom:1px solid rgba(80,150,255,.12);
+}
+.dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f56}.dy{background:#ffbd2e}.dg{background:#27c93f}
+.tb-title{
+  margin-left:10px;font-size:10.5px;
+  color:var(--fg3);font-weight:500;letter-spacing:.02em;
+  display:flex;align-items:center;gap:7px;
+}
+.tb-logo{
+  width:14px;height:14px;
+  background:linear-gradient(135deg,#20c8ff,#6040ff);
+  border-radius:3px;
+  display:inline-block;
+  font-size:7px;color:#fff;
+  text-align:center;line-height:14px;
+  font-weight:800;
+}
+
+.winbody{display:grid;grid-template-columns:46px 1fr}
+.winsb{
+  background:rgba(0,0,0,.35);
+  border-right:1px solid rgba(80,150,255,.08);
+  padding:12px 0;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.sbi{
+  width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--fg3);
+}
+.sbi.on{background:rgba(80,150,255,.22);color:var(--blue2)}
+
+.winmain{padding:14px;display:flex;flex-direction:column;gap:12px}
+
+/* gauges */
+.grow{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.gcard{
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(80,150,255,.1);
+  border-radius:11px;
+  padding:14px 10px;text-align:center;
+}
+.gring{width:72px;height:72px;margin:0 auto 6px;position:relative}
+.gring svg{transform:rotate(-90deg)}
+.gval{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;
+  font-family:'Inter',sans-serif;
+}
+.glbl{font-size:9.5px;color:var(--fg3);font-weight:600;letter-spacing:.04em}
+
+/* bottom panels */
+.brow{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.bcard{
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(80,150,255,.07);
+  border-radius:11px;padding:11px 12px;
+}
+.bcard-hd{
+  display:flex;align-items:center;gap:6px;
+  font-size:9px;font-weight:800;color:var(--fg2);
+  letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:8px;
+}
+.bcard-dot{width:5px;height:5px;border-radius:50%}
+.irow{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:9.5px}
+.ik{color:var(--fg3)}.iv{color:var(--fg);font-weight:600}
+.prow{display:flex;align-items:center;gap:6px;padding:3px 0}
+.pico{
+  width:15px;height:15px;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;flex-shrink:0;font-weight:800;
+}
+.pname{flex:1;font-size:9.5px;color:var(--fg);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pbw{width:42px;flex-shrink:0}
+.pbb{height:2.5px;background:rgba(255,255,255,.07);border-radius:2px}
+.pbf{height:100%;border-radius:2px}
+.ppct{font-size:8.5px;font-weight:600;color:var(--fg2);min-width:28px;text-align:right;font-family:'Inter',sans-serif}
+
+/* optimize btn */
+.win-opt{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  background:linear-gradient(90deg,rgba(0,210,140,.2),rgba(0,190,130,.12));
+  border:1px solid rgba(0,210,140,.35);
+  border-radius:8px;padding:7px 10px;
+  font-size:9px;font-weight:700;color:var(--green);
+  letter-spacing:.04em;cursor:default;
+}
+.win-opt::before{content:"⚡";font-size:10px}
+
+/* phone overlay */
+.phone{
+  position:absolute;
+  right:-22px;bottom:-16px;
+  z-index:4;width:128px;
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,.7)) drop-shadow(0 0 30px rgba(30,100,255,.4));
+}
+.pframe{
+  background:rgba(5,14,38,.96);
+  border:1px solid rgba(80,160,255,.4);
+  border-radius:22px;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.pnotch{width:38px;height:5px;background:#000;border-radius:3px;margin:8px auto 0}
+.pbody{padding:7px 8px 10px}
+.ph-hd{font-size:7.5px;font-weight:800;color:var(--fg2);text-align:center;margin-bottom:8px;letter-spacing:.08em}
+.pgauges{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:8px}
+.pg{
+  background:rgba(255,255,255,.04);border-radius:7px;padding:5px 2px;
+  text-align:center;border:1px solid rgba(80,160,255,.1);
+}
+.pgn{font-size:11px;font-weight:800;line-height:1;margin-bottom:2px;font-family:'Inter',sans-serif}
+.pgl{font-size:6px;color:var(--fg3);font-weight:700;letter-spacing:.04em}
+.ph-sect{font-size:7px;font-weight:800;color:var(--fg2);margin-bottom:5px;letter-spacing:.06em}
+.ph-btn{
+  width:100%;border-radius:6px;padding:6px;font-size:7.5px;font-weight:800;
+  text-align:center;border:none;margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:4px;
+}
+.ph-g{background:rgba(0,230,145,.15);color:var(--green);border:1px solid rgba(0,230,145,.3)}
+.ph-r{background:rgba(255,80,80,.1);color:var(--red);border:1px solid rgba(255,80,80,.22)}
+
+/* ─── FEATURES ───────────────────────── */
+.features{
+  padding:80px 0;
+  position:relative;z-index:1;
+  background:linear-gradient(180deg,rgba(3,6,16,.55),rgba(4,8,22,.65) 30%,rgba(4,8,22,.65) 70%,rgba(3,6,16,.55));
+}
+.features-layout{
+  display:grid;grid-template-columns:.8fr 2.2fr;gap:48px;align-items:center;
+}
+.section-kicker{
+  font-size:11px;letter-spacing:.14em;color:#4a9eff;
+  font-weight:800;margin-bottom:14px;
+  display:flex;align-items:center;gap:6px;
+}
+.section-kicker::before{content:"▶";font-size:9px}
+.section-title{
+  font-size:clamp(24px,2.4vw,36px);line-height:1.3;
+  letter-spacing:-.04em;margin-bottom:12px;font-weight:800;
+}
+.section-sub{color:var(--fg2);line-height:1.8;font-size:13px}
+.section-accent{
+  width:32px;height:2.5px;
+  background:linear-gradient(90deg,var(--blue),var(--purple));
+  border-radius:2px;margin-top:18px;
+}
+
+.feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.feature-card{
+  border:1px solid rgba(60,140,255,.28);
+  border-radius:18px;
+  padding:24px 18px;
+  background:linear-gradient(145deg,rgba(8,24,58,.7),rgba(5,14,36,.65));
+  backdrop-filter:blur(12px);
+  transition:transform .25s,border-color .25s,box-shadow .25s;
+  position:relative;overflow:hidden;
+}
+.feature-card::before{
+  content:"";
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(80,180,255,.35),transparent);
+}
+.feature-card:hover{transform:translateY(-6px);border-color:rgba(40,160,255,.6);box-shadow:0 20px 50px rgba(10,80,255,.2)}
+.feature-icon{
+  width:48px;height:48px;border-radius:13px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(10,60,120,.9),rgba(8,28,70,.9));
+  border:1px solid rgba(30,120,220,.35);
+  margin-bottom:18px;
+  box-shadow:inset 0 0 18px rgba(0,100,255,.15),0 0 14px rgba(30,100,255,.12);
+}
+.feature-icon svg{width:22px;height:22px}
+.feature-card h3{font-size:15px;margin-bottom:10px;letter-spacing:-.03em;font-weight:700}
+.feature-card p{font-size:12px;line-height:1.85;color:var(--fg2)}
+
+/* ─── DOWNLOAD ───────────────────────── */
+.download-section{
+  padding:100px 0;
+  position:relative;z-index:1;
+}
+.download-panel{
+  position:relative;overflow:hidden;
+  border:1px solid rgba(60,140,255,.3);
+  border-radius:28px;
+  padding:64px 36px;
+  text-align:center;
+  background:linear-gradient(140deg,rgba(8,22,56,.75),rgba(5,14,36,.8));
+  backdrop-filter:blur(18px);
+  box-shadow:0 24px 80px rgba(0,0,0,.4);
+}
+.download-panel::before{
+  content:"";
+  position:absolute;left:50%;top:-250px;transform:translateX(-50%);
+  width:600px;height:400px;
+  background:radial-gradient(circle,rgba(30,110,255,.28) 0%,transparent 70%);
+  filter:blur(60px);
+  border-radius:50%;
+  pointer-events:none;
+}
+.download-panel::after{
+  content:"";
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(80,180,255,.5),rgba(180,100,255,.4),transparent);
+}
+.download-panel>*{position:relative}
+.dl-kicker{font-size:11px;letter-spacing:.14em;color:#4a9eff;font-weight:800;margin-bottom:18px}
+.download-panel h2{
+  font-size:clamp(30px,3.2vw,46px);
+  letter-spacing:-.05em;margin-bottom:14px;font-weight:900;
+  line-height:1.2;
+}
+.download-panel p{
+  color:var(--fg2);line-height:1.85;
+  margin:0 auto 28px;max-width:560px;font-size:14px;
+}
+.version-line{
+  display:flex;justify-content:center;gap:18px;
+  flex-wrap:wrap;color:var(--fg2);font-size:12px;margin-top:18px;
+}
+.version-line span{display:flex;align-items:center;gap:6px}
+.download-hint{
+  min-height:22px;color:var(--cyan);
+  font-size:12px;margin-top:14px;font-weight:500;
+}
+
+/* ─── FOOTER ─────────────────────────── */
+.footer{
+  border-top:1px solid rgba(50,120,220,.2);
+  padding:28px 0;
+  background:rgba(3,7,18,.8);
+  position:relative;z-index:1;
+}
+.footer-inner{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  flex-wrap:wrap;
+}
+.footer-note{color:var(--fg3);font-size:11px;line-height:1.8;text-align:right}
+.to-top{color:#6090cc;font-size:12px;transition:color .2s}
+.to-top:hover{color:var(--blue)}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;bottom:28px;
+  transform:translate(-50%,18px);
+  opacity:0;pointer-events:none;z-index:999;
+  background:rgba(8,22,58,.97);
+  border:1px solid rgba(40,120,230,.5);
+  color:#deeeff;
+  padding:13px 20px;border-radius:14px;
+  font-size:13px;font-weight:500;
+  box-shadow:0 14px 40px rgba(0,0,0,.5);
+  transition:all .28s cubic-bezier(.4,0,.2,1);
+  white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ─── RESPONSIVE ─────────────────────── */
+@media(max-width:1060px){
+  .hero{grid-template-columns:1fr 1fr;padding:60px 0}
+  .hero-l{padding-left:max(32px,env(safe-area-inset-left,0px))}
+  .hero-r{padding-right:max(32px,env(safe-area-inset-right,0px))}
+  .features-layout{grid-template-columns:1fr;gap:32px}
+  .feature-grid{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:780px){
+  .container{width:min(100% - 40px,var(--max))}
+  .nav{height:68px}
+  .brand-upm{font-size:27px}
+  .brand-sub-name{font-size:10px}
+  .nav-links{
+    display:none;position:absolute;left:0;right:0;
+    top:67px;
+    background:rgba(4,10,28,.98);
+    border-bottom:1px solid rgba(80,150,255,.15);
+    padding:20px 24px 24px;
+    flex-direction:column;align-items:stretch;gap:0;
+  }
+  .nav-links.open{display:flex}
+  .nav-links a{padding:14px 0;border-bottom:1px solid rgba(80,150,255,.08)}
+  .nav-cta .cta-label{display:none}
+  .nav-cta{padding:10px 14px}
+  .menu-toggle{display:block}
+  .hero{grid-template-columns:1fr;padding:50px 0 40px;min-height:auto}
+  .hero-l{padding:0 max(20px,env(safe-area-inset-left,0px));max-width:100%}
+  .hero-r{padding:32px max(20px,env(safe-area-inset-right,0px));min-height:auto}
+  .scene{max-width:420px}
+  .phone{width:100px;right:-10px;bottom:-10px}
+  .feature-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .feature-card{padding:18px 14px}
+  .download-panel{padding:44px 20px;border-radius:20px}
+}
+@media(max-width:420px){
+  .container{width:min(100% - 32px,var(--max))}
+  .hero h1{font-size:clamp(36px,11vw,52px)}
+  .btn{padding:14px 20px;font-size:13px}
+  .hero-actions{flex-direction:column;align-items:stretch}
+  .feature-grid{grid-template-columns:1fr 1fr}
+  .footer-inner{flex-direction:column;align-items:flex-start}
+  .footer-note{text-align:left}
+  .to-top{display:none}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,::before,::after{transition:none!important;animation:none!important}}
+</style>
+
+<!-- ═══════════════ WORLD BG ═══════════════ -->
+<div class="world-bg" aria-hidden="true">
+  <svg class="world-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- deep space base -->
+      <radialGradient id="bg-core" cx="62%" cy="32%" r="65%">
+        <stop offset="0%"  stop-color="#0c2260"/>
+        <stop offset="40%" stop-color="#060f38"/>
+        <stop offset="100%" stop-color="#03060f"/>
+      </radialGradient>
+      <!-- right-side purple bloom -->
+      <radialGradient id="bg-purple" cx="88%" cy="55%" r="40%">
+        <stop offset="0%"  stop-color="#3a1880" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="#3a1880" stop-opacity="0"/>
+      </radialGradient>
+      <!-- bottom-left teal -->
+      <radialGradient id="bg-teal" cx="12%" cy="88%" r="38%">
+        <stop offset="0%"  stop-color="#083a7a" stop-opacity=".5"/>
+        <stop offset="100%" stop-color="#083a7a" stop-opacity="0"/>
+      </radialGradient>
+      <!-- center-hero blue pillar -->
+      <radialGradient id="bg-pillar" cx="58%" cy="20%" r="30%">
+        <stop offset="0%"  stop-color="#1a50c8" stop-opacity=".45"/>
+        <stop offset="100%" stop-color="#1a50c8" stop-opacity="0"/>
+      </radialGradient>
+
+      <!-- glass panel gradient -->
+      <linearGradient id="glass1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%"  stop-color="#8ab8ff" stop-opacity=".18"/>
+        <stop offset="100%" stop-color="#4060c0" stop-opacity=".06"/>
+      </linearGradient>
+      <linearGradient id="glass2" x1="1" y1="0" x2="0" y2="1">
+        <stop offset="0%"  stop-color="#a0c4ff" stop-opacity=".13"/>
+        <stop offset="100%" stop-color="#6080d8" stop-opacity=".04"/>
+      </linearGradient>
+      <linearGradient id="glass3" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0%"  stop-color="#c0d8ff" stop-opacity=".1"/>
+        <stop offset="100%" stop-color="#8090e0" stop-opacity=".03"/>
+      </linearGradient>
+
+      <!-- orb fills -->
+      <radialGradient id="orb-a" cx="38%" cy="35%" r="60%">
+        <stop offset="0%"  stop-color="#80c8ff" stop-opacity=".9"/>
+        <stop offset="40%" stop-color="#3878ff" stop-opacity=".6"/>
+        <stop offset="100%" stop-color="#1020a0" stop-opacity=".3"/>
+      </radialGradient>
+      <radialGradient id="orb-b" cx="35%" cy="32%" r="55%">
+        <stop offset="0%"  stop-color="#d0c0ff" stop-opacity=".85"/>
+        <stop offset="45%" stop-color="#7040e0" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="#200870" stop-opacity=".25"/>
+      </radialGradient>
+      <radialGradient id="orb-c" cx="40%" cy="36%" r="58%">
+        <stop offset="0%"  stop-color="#a0e8ff" stop-opacity=".9"/>
+        <stop offset="40%" stop-color="#20b0e8" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="#041840" stop-opacity=".2"/>
+      </radialGradient>
+      <radialGradient id="orb-d" cx="38%" cy="34%" r="56%">
+        <stop offset="0%"  stop-color="#b8d8ff" stop-opacity=".8"/>
+        <stop offset="50%" stop-color="#4080d8" stop-opacity=".4"/>
+        <stop offset="100%" stop-color="#080828" stop-opacity=".15"/>
+      </radialGradient>
+
+      <!-- floor reflection gradient -->
+      <linearGradient id="floor-reflect" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"  stop-color="#1a60ff" stop-opacity=".22"/>
+        <stop offset="100%" stop-color="#1a60ff" stop-opacity="0"/>
+      </linearGradient>
+      <!-- floor surface -->
+      <linearGradient id="floor-surface" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"  stop-color="#0a1848" stop-opacity=".7"/>
+        <stop offset="100%" stop-color="#030812" stop-opacity=".9"/>
+      </linearGradient>
+
+      <!-- light beam -->
+      <linearGradient id="beam1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"  stop-color="#50a0ff" stop-opacity=".18"/>
+        <stop offset="100%" stop-color="#50a0ff" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="beam2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"  stop-color="#a060ff" stop-opacity=".14"/>
+        <stop offset="100%" stop-color="#a060ff" stop-opacity="0"/>
+      </linearGradient>
+
+      <!-- glow blur filters -->
+      <filter id="glow-soft" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="18" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="glow-hard" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="6" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="blur-heavy">
+        <feGaussianBlur stdDeviation="40"/>
+      </filter>
+      <filter id="blur-med">
+        <feGaussianBlur stdDeviation="22"/>
+      </filter>
+      <filter id="blur-light">
+        <feGaussianBlur stdDeviation="10"/>
+      </filter>
+      <filter id="orb-shadow" x="-25%" y="-25%" width="150%" height="180%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="shadow"/>
+        <feFlood flood-color="#0020a0" flood-opacity=".6" result="color"/>
+        <feComposite in="color" in2="shadow" operator="in" result="colorShadow"/>
+        <feMerge><feMergeNode in="colorShadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <!-- ── Layer 0: deep space background ── -->
+    <rect width="1440" height="900" fill="url(#bg-core)"/>
+    <rect width="1440" height="900" fill="url(#bg-purple)"/>
+    <rect width="1440" height="900" fill="url(#bg-teal)"/>
+    <rect width="1440" height="900" fill="url(#bg-pillar)"/>
+
+    <!-- ── Layer 1: floor plane ── -->
+    <!-- Floor surface -->
+    <ellipse cx="720" cy="860" rx="900" ry="160" fill="url(#floor-surface)" opacity=".8"/>
+    <!-- Floor subtle grid lines (perspective) -->
+    <g stroke="rgba(60,140,255,.08)" stroke-width=".8" opacity=".7">
+      <!-- horizontal grid lines on floor -->
+      <line x1="0" y1="820" x2="1440" y2="820"/>
+      <line x1="0" y1="845" x2="1440" y2="845"/>
+      <line x1="0" y1="868" x2="1440" y2="868"/>
+      <line x1="0" y1="890" x2="1440" y2="890"/>
+      <!-- converging vertical lines -->
+      <line x1="720" y1="680" x2="0"    y2="900"/>
+      <line x1="720" y1="680" x2="1440" y2="900"/>
+      <line x1="720" y1="700" x2="200"  y2="900"/>
+      <line x1="720" y1="700" x2="1240" y2="900"/>
+      <line x1="720" y1="710" x2="420"  y2="900"/>
+      <line x1="720" y1="710" x2="1020" y2="900"/>
+      <line x1="720" y1="715" x2="600"  y2="900"/>
+      <line x1="720" y1="715" x2="840"  y2="900"/>
+    </g>
+
+    <!-- ── Layer 2: background glow blobs ── -->
+    <ellipse cx="840" cy="300" rx="340" ry="260" fill="#1840c0" opacity=".25" filter="url(#blur-heavy)"/>
+    <ellipse cx="1100" cy="500" rx="220" ry="200" fill="#601aaa" opacity=".3" filter="url(#blur-heavy)"/>
+    <ellipse cx="240" cy="640" rx="240" ry="180" fill="#082880" opacity=".28" filter="url(#blur-heavy)"/>
+
+    <!-- ── Layer 3: light beams / columns ── -->
+    <!-- Left beam -->
+    <polygon points="580,0 620,0 820,820 740,820" fill="url(#beam1)" opacity=".55"/>
+    <!-- Right beam -->
+    <polygon points="860,0 920,0 1100,820 1000,820" fill="url(#beam2)" opacity=".4"/>
+    <!-- Center narrow beam -->
+    <polygon points="700,0 740,0 860,820 800,820" fill="rgba(80,180,255,.1)" opacity=".5"/>
+
+    <!-- ── Layer 4: large glass panels (behind content) ── -->
+    <!-- Big left-back glass shard -->
+    <g opacity=".55" filter="url(#blur-light)">
+      <polygon points="300,80 560,50 680,440 380,500" fill="url(#glass1)"/>
+      <polygon points="300,80 560,50 680,440 380,500" fill="none" stroke="rgba(140,200,255,.25)" stroke-width="1"/>
+    </g>
+    <!-- Mid glass shard -->
+    <g opacity=".45" filter="url(#blur-light)">
+      <polygon points="620,20 880,60 900,380 600,360" fill="url(#glass2)"/>
+      <polygon points="620,20 880,60 900,380 600,360" fill="none" stroke="rgba(160,210,255,.2)" stroke-width="1"/>
+    </g>
+    <!-- Right-side tall panel -->
+    <g opacity=".4">
+      <polygon points="1050,40 1280,80 1300,560 1020,520" fill="url(#glass3)"/>
+      <polygon points="1050,40 1280,80 1300,560 1020,520" fill="none" stroke="rgba(140,180,255,.18)" stroke-width="1"/>
+    </g>
+    <!-- Small foreground shard top-right -->
+    <g opacity=".5">
+      <polygon points="1150,10 1360,30 1380,200 1140,190" fill="rgba(180,220,255,.08)"/>
+      <polygon points="1150,10 1360,30 1380,200 1140,190" fill="none" stroke="rgba(160,210,255,.22)" stroke-width="1"/>
+    </g>
+    <!-- Bottom-left accent shard -->
+    <g opacity=".4">
+      <polygon points="60,560 280,520 320,760 80,800" fill="rgba(100,160,255,.07)"/>
+      <polygon points="60,560 280,520 320,760 80,800" fill="none" stroke="rgba(120,180,255,.18)" stroke-width=".8"/>
+    </g>
+
+    <!-- glass edge highlight lines (sharp bright edges on panels) -->
+    <g stroke-linecap="round" opacity=".7">
+      <line x1="300" y1="80" x2="560" y2="50" stroke="rgba(180,230,255,.45)" stroke-width="1.2"/>
+      <line x1="620" y1="20" x2="880" y2="60" stroke="rgba(160,220,255,.38)" stroke-width="1"/>
+      <line x1="1050" y1="40" x2="1280" y2="80" stroke="rgba(140,200,255,.32)" stroke-width=".9"/>
+    </g>
+
+    <!-- ── Layer 5: 3-D spheres ── -->
+    <!-- Large main sphere (right back) -->
+    <g filter="url(#orb-shadow)">
+      <circle cx="1180" cy="240" r="88" fill="url(#orb-b)" opacity=".88"/>
+      <!-- specular highlight -->
+      <ellipse cx="1155" cy="200" rx="28" ry="18" fill="white" opacity=".28"/>
+    </g>
+    <!-- Medium sphere (left mid) -->
+    <g filter="url(#orb-shadow)">
+      <circle cx="160" cy="480" r="58" fill="url(#orb-a)" opacity=".82"/>
+      <ellipse cx="144" cy="454" rx="18" ry="12" fill="white" opacity=".28"/>
+    </g>
+    <!-- Small sphere (center top) -->
+    <g filter="url(#glow-hard)">
+      <circle cx="720" cy="100" r="32" fill="url(#orb-c)" opacity=".75"/>
+      <ellipse cx="710" cy="86" rx="10" ry="7" fill="white" opacity=".35"/>
+    </g>
+    <!-- Tiny sphere (bottom right) -->
+    <g filter="url(#glow-hard)">
+      <circle cx="1340" cy="680" r="22" fill="url(#orb-d)" opacity=".72"/>
+      <ellipse cx="1332" cy="671" rx="7" ry="5" fill="white" opacity=".3"/>
+    </g>
+    <!-- Tiny sphere (bottom left area) -->
+    <g filter="url(#glow-hard)">
+      <circle cx="100" cy="760" r="16" fill="url(#orb-a)" opacity=".6"/>
+      <ellipse cx="94" cy="753" rx="5" ry="3.5" fill="white" opacity=".28"/>
+    </g>
+
+    <!-- sphere floor reflections / glows -->
+    <ellipse cx="1180" cy="328" rx="70" ry="18" fill="#3060ff" opacity=".3" filter="url(#blur-med)"/>
+    <ellipse cx="160"  cy="538" rx="46" ry="12" fill="#2050e0" opacity=".28" filter="url(#blur-med)"/>
+    <ellipse cx="720"  cy="132" rx="26" ry="8"  fill="#20c0ff" opacity=".25" filter="url(#blur-light)"/>
+
+    <!-- ── Layer 6: fine particle dots ── -->
+    <g fill="rgba(160,220,255,.55)" opacity=".6">
+      <circle cx="440" cy="130" r="1.5"/><circle cx="810" cy="60" r="1.2"/>
+      <circle cx="980" cy="200" r="1.8"/><circle cx="1240" cy="140" r="1.3"/>
+      <circle cx="200" cy="310" r="1.4"/><circle cx="390" cy="400" r="1"/>
+      <circle cx="1060" cy="350" r="1.6"/><circle cx="1380" cy="410" r="1.2"/>
+      <circle cx="50"  cy="200" r="1.1"/><circle cx="660" cy="300" r="1.3"/>
+      <circle cx="1200" cy="460" r="1"/><circle cx="300" cy="600" r="1.4"/>
+      <circle cx="1100" cy="600" r="1.2"/><circle cx="760" cy="700" r="1"/>
+    </g>
+    <!-- slightly brighter star dots -->
+    <g fill="rgba(220,240,255,.8)">
+      <circle cx="520" cy="80" r="1"/><circle cx="1320" cy="200" r="1.2"/>
+      <circle cx="80"  cy="380" r="1.1"/><circle cx="900" cy="120" r="1"/>
+      <circle cx="1400" cy="300" r="1.1"/>
+    </g>
+
+    <!-- ── Layer 7: top vignette ── -->
+    <rect width="1440" height="120" fill="url(#vignette-top)" opacity="1"/>
+    <defs>
+      <linearGradient id="vignette-top" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"  stop-color="#030610" stop-opacity=".7"/>
+        <stop offset="100%" stop-color="#030610" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+  </svg>
+</div>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="#home" aria-label="UPM 홈">
+      <div class="brand-logo">
+        <span class="brand-upm">UPM</span>
+        <div class="brand-sub">
+          <span class="brand-sub-name">Universal PC Manager</span>
+        </div>
+      </div>
+    </a>
+
+    <nav class="nav-links" id="navLinks" aria-label="주요 메뉴">
+      <a href="#home" class="active">홈</a>
+      <a href="#features">기능</a>
+      <a href="#download">다운로드</a>
+      <a href="#about">소개</a>
+    </nav>
+
+    <a class="nav-cta download-trigger" href="#download" aria-label="앱 다운로드">
+      <span class="win-ico">⊞</span>
+      <span class="cta-label">앱 다운로드</span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+  </div>
+</header>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<main>
+<section class="hero" id="home">
+  <!-- Left copy -->
+  <div class="hero-l">
+    <p class="eyebrow">더 스마트한 PC 관리의 시작</p>
+    <h1><span class="gw">UPM</span>으로<br>당신의 PC를<br>최적화하세요.</h1>
+    <p class="hero-copy">실시간 모니터링부터 자동 최적화까지,<br>UPM이 당신의 PC를 더 빠르고, 더 안정적으로 만들어줍니다.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary download-trigger" href="#download">
+        <span class="win-ico">⊞</span> Windows 앱 다운로드 →
+      </a>
+      <a class="btn btn-secondary" href="#features">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.3"/><polygon points="6.5,5.5 11,8 6.5,10.5" fill="currentColor"/></svg>
+        소개 영상 보기
+      </a>
+    </div>
+    <div class="trust-row">
+      <span><b class="ck">✓</b> Windows 10/11 지원</span>
+      <span><b class="ck">✓</b> 무료 다운로드</span>
+      <span><b class="ck">✓</b> 간편한 설치</span>
+    </div>
+  </div>
+
+  <!-- Right scene -->
+  <div class="hero-r">
+    <div class="scene">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+
+      <!-- Desktop window -->
+      <div class="dwin">
+        <div class="titlebar">
+          <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+          <div class="tb-title">
+            <span class="tb-logo">U</span>
+            UPM — Universal PC Manager
+          </div>
+        </div>
+        <div class="winbody">
+          <div class="winsb">
+            <div class="sbi on">⊞</div>
+            <div class="sbi">▤</div>
+            <div class="sbi">⚡</div>
+            <div class="sbi">🛡</div>
+            <div class="sbi">⚙</div>
+          </div>
+          <div class="winmain">
+            <!-- Gauges -->
+            <div class="grow">
+              <div class="gcard">
+                <div class="gring">
+                  <svg width="72" height="72" viewBox="0 0 72 72">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(22,199,255,.1)" stroke-width="6"/>
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="url(#gc1)" stroke-width="6"
+                      stroke-dasharray="188.5" stroke-dashoffset="174" stroke-linecap="round"/>
+                    <defs><linearGradient id="gc1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#14d8ff"/><stop offset="100%" stop-color="#2670ff"/></linearGradient></defs>
+                  </svg>
+                  <div class="gval" style="color:#16c7ff">18%</div>
+                </div>
+                <div class="glbl">CPU 사용률</div>
+              </div>
+              <div class="gcard">
+                <div class="gring">
+                  <svg width="72" height="72" viewBox="0 0 72 72">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(240,180,0,.1)" stroke-width="6"/>
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="url(#gc2)" stroke-width="6"
+                      stroke-dasharray="188.5" stroke-dashoffset="60" stroke-linecap="round"/>
+                    <defs><linearGradient id="gc2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ffcc20"/><stop offset="100%" stop-color="#ff8820"/></linearGradient></defs>
+                  </svg>
+                  <div class="gval" style="color:#ffb840">67%</div>
+                </div>
+                <div class="glbl">메모리 사용률</div>
+              </div>
+              <div class="gcard">
+                <div class="gring">
+                  <svg width="72" height="72" viewBox="0 0 72 72">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(34,232,160,.1)" stroke-width="6"/>
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="url(#gc3)" stroke-width="6"
+                      stroke-dasharray="188.5" stroke-dashoffset="126" stroke-linecap="round"/>
+                    <defs><linearGradient id="gc3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#22e8a0"/><stop offset="100%" stop-color="#10b8d8"/></linearGradient></defs>
+                  </svg>
+                  <div class="gval" style="color:#22e8a0">33%</div>
+                </div>
+                <div class="glbl">GPU 사용률</div>
+              </div>
+            </div>
+
+            <!-- Bottom panels -->
+            <div class="brow">
+              <div class="bcard">
+                <div class="bcard-hd">
+                  <div class="bcard-dot" style="background:var(--cyan);box-shadow:0 0 5px var(--cyan)"></div>
+                  하드웨어 사용 요약
+                </div>
+                <div class="irow"><span class="ik">CPU</span><span class="iv">AMD Ryzen 7 8845HS</span></div>
+                <div class="irow"><span class="ik">GPU</span><span class="iv">AMD Radeon 780M Graphics</span></div>
+                <div class="irow"><span class="ik">RAM</span><span class="iv">16 GB</span></div>
+                <div class="irow"><span class="ik">메인보드</span><span class="iv">ASUSTeK M650GUA</span></div>
+              </div>
+              <div class="bcard">
+                <div class="bcard-hd">
+                  <div class="bcard-dot" style="background:#ffb840;box-shadow:0 0 5px #ffb840"></div>
+                  메모리 사용 현황
+                </div>
+                <div class="prow">
+                  <div class="pico" style="background:rgba(30,100,220,.2);color:#5aa0ff">C</div>
+                  <span class="pname">chrome (21)</span>
+                  <div class="pbw"><div class="pbb"><div class="pbf" style="width:62%;background:linear-gradient(90deg,#2070ff,#10aaff)"></div></div></div>
+                  <span class="ppct">16.2%</span>
+                </div>
+                <div class="prow">
+                  <div class="pico" style="background:rgba(140,80,255,.2);color:#a06bff">A</div>
+                  <span class="pname">Antigravity (11)</span>
+                  <div class="pbw"><div class="pbb"><div class="pbf" style="width:46%;background:linear-gradient(90deg,#8030ff,#c060ff)"></div></div></div>
+                  <span class="ppct">12.6%</span>
+                </div>
+                <div class="prow">
+                  <div class="pico" style="background:rgba(20,200,255,.15);color:#20d0ff">S</div>
+                  <span class="pname">svchost (95)</span>
+                  <div class="pbw"><div class="pbb"><div class="pbf" style="width:38%;background:linear-gradient(90deg,#10b0e0,#18e0ff)"></div></div></div>
+                  <span class="ppct">10.9%</span>
+                </div>
+                <div class="prow">
+                  <div class="pico" style="background:rgba(255,255,255,.06);color:#4a6098">D</div>
+                  <span class="pname">dwm</span>
+                  <div class="pbw"><div class="pbb"><div class="pbf" style="width:30%;background:rgba(80,120,200,.6)"></div></div></div>
+                  <span class="ppct">8.4%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="win-opt">빠른 최적화 실행</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone -->
+      <div class="phone">
+        <div class="pframe">
+          <div class="pnotch"></div>
+          <div class="pbody">
+            <div class="ph-hd">UPM MOBILE</div>
+            <div class="pgauges">
+              <div class="pg">
+                <div class="pgn" style="color:#16c7ff">6%</div>
+                <div class="pgl">CPU</div>
+              </div>
+              <div class="pg">
+                <div class="pgn" style="color:#ffb840">76%</div>
+                <div class="pgl">메모리</div>
+              </div>
+              <div class="pg">
+                <div class="pgn" style="color:#22e8a0">9%</div>
+                <div class="pgl">GPU</div>
+              </div>
+            </div>
+            <div class="ph-sect">빠른 제어</div>
+            <div class="ph-btn ph-g">⚡ 빠른 최적화</div>
+            <div class="ph-btn ph-r">⏻ 전원 끄기</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FEATURES ═══════════════ -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="features-layout">
+      <div>
+        <div class="section-kicker">KEY FEATURES</div>
+        <h2 class="section-title">UPM이 제공하는<br>핵심 기능을<br>만나보세요.</h2>
+        <p class="section-sub">복잡한 시스템 정보는 간단하게.<br>필요한 PC 관리 기능을 한곳에서.</p>
+        <div class="section-accent"></div>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div class="feature-icon">
+            <svg fill="none" viewBox="0 0 22 22" stroke="#40c0ff" stroke-width="1.5">
+              <rect x="2" y="3" width="18" height="13" rx="2"/><path d="M7 19h8M11 16v3" stroke-linecap="round"/>
+              <circle cx="8.5" cy="9.5" r="1.5" fill="#40c0ff" stroke="none"/><circle cx="13.5" cy="9.5" r="1.5" fill="#40c0ff" stroke="none"/>
+            </svg>
+          </div>
+          <h3>실시간 모니터링</h3>
+          <p>CPU, RAM, GPU 등 주요 하드웨어 사용량을 실시간으로 확인하세요.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">
+            <svg fill="none" viewBox="0 0 22 22" stroke="#ffc040" stroke-width="1.5">
+              <polygon points="11,2 13.5,8.5 20,9 15,14 16.5,20 11,17 5.5,20 7,14 2,9 8.5,8.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>간편한 최적화</h3>
+          <p>필요한 관리 기능을 간편하게 실행해 쾌적한 PC 환경을 유지하세요.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">
+            <svg fill="none" viewBox="0 0 22 22" stroke="#a060ff" stroke-width="1.5">
+              <rect x="7" y="2" width="8" height="14" rx="2"/><path d="M9 17v1a2 2 0 002 2v0a2 2 0 002-2v-1" stroke-linecap="round"/>
+              <line x1="9.5" y1="6" x2="12.5" y2="6" stroke-linecap="round" opacity=".5"/>
+              <line x1="9.5" y1="9" x2="12.5" y2="9" stroke-linecap="round" opacity=".5"/>
+            </svg>
+          </div>
+          <h3>모바일 연동</h3>
+          <p>PC에서 떨어져 있을 때도 모바일 화면으로 상태를 확인하고 제어하세요.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">
+            <svg fill="none" viewBox="0 0 22 22" stroke="#22e8a0" stroke-width="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>한눈에 보는 관리</h3>
+          <p>직관적인 대시보드에서 시스템 상태와 주요 정보를 한눈에 확인하세요.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ DOWNLOAD ═══════════════ -->
+<section class="download-section" id="download">
+  <div class="container">
+    <div class="download-panel">
+      <div class="dl-kicker">GET STARTED WITH UPM</div>
+      <h2>더 스마트한 PC 관리,<br><span class="gw">지금 시작하세요.</span></h2>
+      <p>UPM을 설치하고 PC의 주요 성능 정보를 한곳에서 확인해 보세요.<br>다운로드 버튼에 실제 배포 파일 링크를 연결하면 바로 사용할 수 있습니다.</p>
+      <a class="btn btn-primary" id="mainDownload" href="#download">
+        <span class="win-ico">⊞</span> Windows 앱 다운로드 ↓
+      </a>
+      <div class="version-line">
+        <span>✓ Windows 10 / 11</span>
+        <span>✓ 설치 파일 제공</span>
+        <span>✓ UPM Desktop</span>
+      </div>
+      <div class="download-hint" id="downloadHint" aria-live="polite">최신 버전 배포 링크를 준비 중입니다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- about anchor -->
+<section id="about" style="padding:24px 0;position:relative;z-index:1">
+  <div class="container" style="display:flex;justify-content:center;text-align:center">
+    <p style="color:#4a6898;font-size:12px;line-height:1.8;margin:0">
+      Universal PC Manager<br>
+      <span style="color:#344e78">PC 성능 모니터링과 관리를 더 간편하게.</span>
+    </p>
+  </div>
+</section>
+</main>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <a class="brand" href="#home" aria-label="UPM 홈">
+      <span class="brand-upm" style="font-size:24px">UPM</span>
+      <div class="brand-sub" style="margin-left:8px">
+        <span class="brand-sub-name">Universal PC Manager</span>
+        <span style="font-size:9px;color:#4a6898">Smarter PC. Better Life.</span>
+      </div>
+    </a>
+    <div class="footer-note">
+      © <span id="year"></span> UPM Project. All rights reserved.<br>
+      <a class="to-top" href="#home">맨 위로 ↑</a>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// ── 배포 후 이 URL을 실제 GitHub Releases 다운로드 URL로 변경하세요.
+// 예: https://github.com/USERNAME/REPOSITORY/releases/latest/download/UPM-Setup.exe
+const DOWNLOAD_URL = "";
+
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.remove('show'), 3200);
+}
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// 다운로드 트리거 (모든 다운로드 버튼)
+document.querySelectorAll('.download-trigger').forEach(link => {
+  link.addEventListener('click', e => {
+    if(DOWNLOAD_URL){ e.preventDefault(); window.location.href = DOWNLOAD_URL; }
+  });
+});
+
+document.getElementById('mainDownload').addEventListener('click', e => {
+  if(DOWNLOAD_URL){ e.preventDefault(); window.location.href = DOWNLOAD_URL; }
+  else { e.preventDefault(); showToast('아직 다운로드 파일이 연결되지 않았어요. index.html의 DOWNLOAD_URL을 설정해 주세요.'); }
+});
+
+// 모바일 메뉴 토글
+const menuToggle = document.getElementById('menuToggle');
+const navLinks = document.getElementById('navLinks');
+menuToggle.addEventListener('click', () => {
+  const open = navLinks.classList.toggle('open');
+  menuToggle.setAttribute('aria-expanded', String(open));
+  menuToggle.textContent = open ? '✕' : '☰';
+});
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+    menuToggle.textContent = '☰';
+  });
+});
+
+// 네비게이션 active 상태 (스크롤 기반)
+const sections = document.querySelectorAll('section[id]');
+const navAs = document.querySelectorAll('.nav-links a');
+function updateNav(){
+  let cur = '';
+  sections.forEach(s => {
+    if(window.scrollY >= s.offsetTop - 120) cur = s.id;
+  });
+  navAs.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+  });
+}
+window.addEventListener('scroll', updateNav, {passive:true});
+updateNav();
+</script>
