@@ -234,22 +234,22 @@ h2 em{font-style:normal;color:var(--accent)}
   box-shadow:0 30px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06)}
 .deck .brand{text-align:center;font:600 22px var(--sans);letter-spacing:.08em;color:#cfd6db;margin-bottom:14px}
 .kgrid{display:grid;grid-template-columns:repeat(5,118px);grid-auto-rows:118px;gap:14px}
-.k{border-radius:16px;background:#070b0e;border:2px solid #2a333a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--fg);font-family:var(--sans);padding:0;font-size:16px}
-.k small{font:600 15px var(--sans);color:#c9d3da;letter-spacing:.02em}
-.k b{font:700 40px var(--mono);color:#5DE38A;line-height:1;font-variant-numeric:tabular-nums}
-.k .u{font:600 14px var(--sans);color:#c9d3da}
-.k.blank{background:#0b1013}
-.k.clock{grid-column:span 2;background:#05080a;gap:6px}
-.k.clock b{color:#f4f7f9;font-size:50px}
-.k.clock b span{font-size:20px;margin-left:6px}
-.k .logo{font:800 30px var(--sans);letter-spacing:-.02em;background:linear-gradient(100deg,#7ee8f5,#39C6D6 55%,#9DB4FF);-webkit-background-clip:text;background-clip:text;color:transparent}
-button.k{cursor:pointer;transition:transform .12s, box-shadow .3s, background .3s, border-color .3s}
-button.k:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-.k.boost{background:linear-gradient(180deg,#2a74ff,#1546c9);border-color:#6d97ff}
-.k.boost b{color:#ffd23d;font-size:48px;font-family:var(--sans)}
-.k.boost small{color:#fff}
-.k.boost.run{background:linear-gradient(180deg,#ff5145,#c8261c);border-color:#ff8a80;box-shadow:0 0 30px rgba(255,74,61,.6)}
-.k.hit{transform:translateY(3px)}
+.kgrid .k{border-radius:16px;background:#070b0e;border:2px solid #2a333a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--fg);font-family:var(--sans);padding:0;font-size:16px}
+.kgrid .k small{font:600 15px var(--sans);color:#c9d3da;letter-spacing:.02em}
+.kgrid .k b{font:700 40px var(--mono);color:#5DE38A;line-height:1;font-variant-numeric:tabular-nums}
+.kgrid .k .u{font:600 14px var(--sans);color:#c9d3da}
+.kgrid .k.blank{background:#0b1013}
+.kgrid .k.clock{grid-column:span 2;background:#05080a;gap:6px}
+.kgrid .k.clock b{color:#f4f7f9;font-size:50px}
+.kgrid .k.clock b span{font-size:20px;margin-left:6px}
+.kgrid .k .logo{font:800 30px var(--sans);letter-spacing:-.02em;background:linear-gradient(100deg,#7ee8f5,#39C6D6 55%,#9DB4FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.kgrid button.k{cursor:pointer;transition:transform .12s, box-shadow .3s, background .3s, border-color .3s}
+.kgrid button.k:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.kgrid .k.boost{background:linear-gradient(180deg,#2a74ff,#1546c9);border-color:#6d97ff}
+.kgrid .k.boost b{color:#ffd23d;font-size:48px;font-family:var(--sans)}
+.kgrid .k.boost small{color:#fff}
+.kgrid .k.boost.run{background:linear-gradient(180deg,#ff5145,#c8261c);border-color:#ff8a80;box-shadow:0 0 30px rgba(255,74,61,.6)}
+.kgrid .k.hit{transform:translateY(3px)}
 .chain{display:flex;align-items:center;gap:10px;font-size:21px;flex-wrap:nowrap}
 .chain .nd{padding:10px 14px;border-radius:12px;background:#132a3a;border:1.5px solid var(--line);white-space:nowrap;transition:border-color .25s, background .25s, color .25s}
 .chain .nd.lit{border-color:var(--accent);background:rgba(57,198,214,.16);color:#d9fbff}
@@ -257,7 +257,7 @@ button.k:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .ctlmsg{font-family:var(--mono);font-size:21px;color:var(--accent);min-height:28px}
 
 /* ---------- 10. 시연 영상 ---------- */
-.vwrap{display:grid;grid-template-columns:1180px 1fr;gap:40px;flex:1;min-height:0;align-items:start}
+.vwrap{display:flex;justify-content:center;align-items:center;flex:1;min-height:0}
 .player{position:relative;width:1180px;height:664px;border-radius:22px;overflow:hidden;border:1.5px solid var(--line);background:#000;box-shadow:0 30px 70px rgba(0,0,0,.5)}
 .player video,.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
 .vtag{position:absolute;left:18px;top:16px;display:flex;gap:10px;align-items:center;font:600 18px var(--mono);color:#fff;background:rgba(8,17,26,.72);border-radius:999px;padding:8px 14px;letter-spacing:.06em;pointer-events:none}
@@ -328,15 +328,9 @@ body.mouse .ctrls{opacity:.9}
   .pkt{display:none}
 }
 
-/* demo: 영상이 무대 전체를 채움 */
-.slide[data-key="demo"]{padding:0}
-.slide[data-key="demo"] .eyebrow,.slide[data-key="demo"] h2{display:none}
-.slide[data-key="demo"] .vwrap{display:block;position:absolute;inset:0}
-.slide[data-key="demo"] .player{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:0;box-shadow:none}
-.stage:has(.slide[data-key="demo"].on) .foot,.stage:has(.slide[data-key="demo"].on) .progress{display:none}
 /* end: 슬로건 + 우하단 팀 정보 */
 .s-end .slogan{font-size:104px;font-weight:700;line-height:1.22;letter-spacing:-.03em;margin-top:-80px}
-.s-end .slogan .k{color:var(--accent)}
+.s-end .slogan em{font-style:normal;color:var(--accent)}
 .s-end .slogan b{color:var(--amber);font-family:var(--mono)}
 .s-end .qa{font-family:var(--mono);font-size:34px;color:var(--muted);letter-spacing:.12em}
 .s-end .endinfo{position:absolute;right:110px;bottom:100px;display:flex;flex-direction:column;align-items:flex-end;gap:14px}
@@ -643,7 +637,7 @@ body.mouse .ctrls{opacity:.9}
 
 <!-- 12. 끝 -->
 <section class="slide s-end" data-key="end">
-  <div class="slogan rv"><span class="k">전문가</span>처럼 관리하고,<br><span class="k">초보자</span>처럼 사용하는<br>통합 PC 솔루션 <b>UPM</b></div>
+  <div class="slogan rv"><em>전문가</em>처럼 관리하고,<br><em>초보자</em>처럼 사용하는<br>통합 PC 솔루션 <b>UPM</b></div>
   <div class="qa rv" style="--d:.2s">Q&amp;A · 감사합니다</div>
   <div class="endinfo rv" style="--d:.4s">
     <div class="team4">
