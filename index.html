@@ -266,10 +266,10 @@ button{font:inherit;cursor:pointer}
 .ss-dr{background:#ff5f56}.ss-dy{background:#ffbd2e}.ss-dg{background:#27c93f}
 .ss-title{margin-left:8px;font-size:10px;color:#5a7aaa;font-weight:500}
 
-/* Mobile screenshots — 4개 균등 정렬 */
+/* Mobile screenshots — 3개 균등 정렬 */
 .ss-mobiles{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:10px;
   position:relative;
   z-index:2;
@@ -471,7 +471,7 @@ button{font:inherit;cursor:pointer}
   .hero h1{font-size:clamp(36px,11vw,52px)}
   .btn{padding:14px 20px;font-size:13px}
   .hero-actions{flex-direction:column;align-items:stretch}
-  .ss-mobiles{grid-template-columns:repeat(2,1fr)}
+  .ss-mobiles{grid-template-columns:repeat(3,1fr)}
   .feature-grid{grid-template-columns:1fr 1fr}
   .footer-inner{flex-direction:column;align-items:flex-start}
   .footer-note{text-align:left}
@@ -740,7 +740,7 @@ button{font:inherit;cursor:pointer}
       <a href="#home" class="active">홈</a>
       <a href="#features">기능</a>
       <a href="#download">다운로드</a>
-      <a href="#about">소개</a>
+      <a href="upm-pt.html">소개</a>
     </nav>
 
     <a class="nav-cta download-trigger" href="#download" aria-label="앱 다운로드">
@@ -795,20 +795,16 @@ button{font:inherit;cursor:pointer}
       <!-- Mobile screenshots row -->
       <div class="ss-mobiles">
         <div class="ss-mob">
-          <img src="mobile1.jpg" alt="UPM 모바일 홈 - 실시간 모니터링">
+          <img src="upm-mb_01.jpg" alt="UPM 모바일 홈 - 실시간 모니터링">
           <div class="ss-mob-label">홈 · 모니터링</div>
         </div>
         <div class="ss-mob">
-          <img src="mobile2.jpg" alt="UPM 모바일 - CPU 사용량 실시간 그래프">
+          <img src="upm-mb_03.jpg" alt="UPM 모바일 - 사용량 실시간 그래프">
           <div class="ss-mob-label">실시간 그래프</div>
         </div>
         <div class="ss-mob">
-          <img src="mobile3.jpg" alt="UPM 모바일 - 원격 PC 제어">
+          <img src="upm-mb_02.jpg" alt="UPM 모바일 - 원격 PC 제어">
           <div class="ss-mob-label">원격 제어</div>
-        </div>
-        <div class="ss-mob">
-          <img src="mobile4.jpg" alt="UPM 모바일 - 연결 설정">
-          <div class="ss-mob-label">연결 설정</div>
         </div>
       </div>
     </div>
@@ -883,26 +879,29 @@ button{font:inherit;cursor:pointer}
       <div class="dl-kicker">GET STARTED WITH UPM</div>
       <h2>더 스마트한 PC 관리,<br><span class="gw">지금 시작하세요.</span></h2>
       <p>UPM PC 클라이언트를 설치하고 UPM MOBILE 앱과 연결하면<br>언제 어디서나 내 PC 상태를 실시간으로 확인하고 제어할 수 있습니다.</p>
-      <a class="btn btn-primary" id="mainDownload" href="#download">
+      <a class="btn btn-primary" id="mainDownload" href="https://github.com/DMU-DeCode/upm-mainpage/releases/latest/download/UPM_Setup_1.0.0.0_x64.exe">
         <span class="win-ico">⊞</span> Windows 앱 다운로드 ↓
       </a>
       <div class="version-line">
-        <span>✓ Windows 10 / 11</span>
-        <span>✓ 설치 파일 제공</span>
+        <span>✓ Windows 10 / 11 (x64)</span>
+        <span>✓ v1.0.0.0 설치 파일 제공</span>
         <span>✓ UPM Desktop</span>
       </div>
-      <div class="download-hint" id="downloadHint" aria-live="polite">최신 버전 배포 링크를 준비 중입니다.</div>
+      <div class="download-hint" id="downloadHint" aria-live="polite">UPM_Setup_1.0.0.0_x64.exe (약 66.3 MB)</div>
     </div>
   </div>
 </section>
 
 <!-- about anchor -->
 <section id="about" style="padding:24px 0;position:relative;z-index:1">
-  <div class="container" style="display:flex;justify-content:center;text-align:center">
+  <div class="container" style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
     <p style="color:#4a6898;font-size:12px;line-height:1.8;margin:0">
       Universal PC Manager<br>
       <span style="color:#344e78">PC 성능 모니터링과 관리를 더 간편하게.</span>
     </p>
+    <a class="btn btn-secondary" href="upm-pt.html" style="padding:10px 20px;font-size:12px">
+      발표 자료(PT) 보기 →
+    </a>
   </div>
 </section>
 </main>
@@ -929,7 +928,7 @@ button{font:inherit;cursor:pointer}
 <script>
 // ── 배포 후 이 URL을 실제 GitHub Releases 다운로드 URL로 변경하세요.
 // 예: https://github.com/USERNAME/REPOSITORY/releases/latest/download/UPM-Setup.exe
-const DOWNLOAD_URL = "";
+const DOWNLOAD_URL = "https://github.com/DMU-DeCode/upm-mainpage/releases/latest/download/UPM_Setup_1.0.0.0_x64.exe";
 
 const toast = document.getElementById('toast');
 let toastTimer;
