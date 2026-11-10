@@ -657,7 +657,7 @@ body.mouse .ctrls{opacity:.9}
 </div>
 </div>
 
-<div class="hint" id="hint">→ / Space 다음 · ← 이전 · N 대본 · P 발표자 창 · T 타이머 · F 전체화면 · K 영상 재생/정지</div>
+<div class="hint" id="hint">→ / ↓ / Space 다음 · ← / ↑ 이전 · N 대본 · P 발표자 창 · T 타이머 · F 전체화면 · K 영상 재생/정지</div>
 <div class="ctrls" id="ctrls">
   <a href="index.html" id="bHome" style="text-decoration:none;display:inline-flex;align-items:center;font:600 14px var(--sans);color:var(--fg);background:rgba(15,31,44,.92);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer" aria-label="메인 홈으로">⌂ 홈으로</a>
   <button type="button" id="bPrev" aria-label="이전 슬라이드">◀</button>
@@ -947,8 +947,8 @@ const NOTES = [{"title": "표지", "sec": 17, "script": "안녕하십니까, 컴
   function onKey(e){
     const k=e.key;
     if(e.target && e.target.tagName==='BUTTON' && (k===' '||k==='Enter')) return;
-    if(['ArrowRight','PageDown',' ','Enter'].includes(k)){ e.preventDefault(); next(); }
-    else if(['ArrowLeft','PageUp','Backspace'].includes(k)){ e.preventDefault(); prev(); }
+    if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].includes(k)){ e.preventDefault(); next(); }
+    else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(k)){ e.preventDefault(); prev(); }
     else if(k==='Home'){ show(0); } else if(k==='End'){ show(N-1); }
     else if(k==='n'||k==='N'||k==='ㅜ'){ toggleNotes(); }
     else if(k==='p'||k==='P'||k==='ㅔ'){ openPresenter(); }
